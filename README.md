@@ -1,4 +1,4 @@
-# ruichang-cwa-rcrmyy
+# vue-quick-start
 
 ## Project setup
 ```

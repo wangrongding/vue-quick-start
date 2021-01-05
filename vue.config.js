@@ -29,7 +29,7 @@ module.exports = {
 					nyanCatSays(progress, messages) {
 						if (progress === 1) {
 							// 当构建完成时，喊出「呦，又在写 Bug 了？」
-							return "云影前端开发小队,冲!!!";
+							return "冲!!!";
 						}
 					},
 				})
