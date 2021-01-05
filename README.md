@@ -1,4 +1,4 @@
-# ruichang-cwa-rcrmyy2
+# ruichang-cwa-rcrmyy
 
 ## Project setup
 ```
