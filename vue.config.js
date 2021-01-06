@@ -28,7 +28,7 @@ module.exports = {
 					debounceInterval: 60,
 					nyanCatSays(progress, messages) {
 						if (progress === 1) {
-							// 当构建完成时，喊出「呦，又在写 Bug 了？」
+							// 当构建完成时，喊出的话
 							return "冲!!!";
 						}
 					},
@@ -50,6 +50,7 @@ module.exports = {
 		config.resolve.alias
 			.set("@", resolve("src"))
 			.set("assets", resolve("src/assets"))
+			.set("api", resolve("src/api"))
 			.set("router", resolve("src/router"))
 			.set("store", resolve("src/store"))
 			.set("components", resolve("src/components"));
