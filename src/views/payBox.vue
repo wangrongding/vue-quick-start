@@ -1,98 +1,41 @@
 <template>
-	<div class="home">
-		<!-- <img alt="Vue logo" src="@/assets/logo.png" /> -->
+	<div class="payBox">
 		<div class="title">
 			<img src="../assets/logo.jpg" alt="" width="50px" />
 			<h2>瑞昌市人民医院缴费助手</h2>
 		</div>
-		<!-- <h3>瑞昌市人民医院缴费助手</h3> -->
-		<el-form :inline="true" :model="queryForm" class="demo-form-inline">
-			<el-form-item label="患者就诊卡号">
-				<el-input v-model="queryForm.user" placeholder="请输入患者就诊卡号"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="success" @click="search">查询</el-button>
-			</el-form-item>
-		</el-form>
-		<el-table :data="tableData" style="width: 100%">
+		<!-- <el-table :data="tableData" style="width: 100%">
 			<el-table-column prop="date" label="序号"></el-table-column>
 			<el-table-column prop="date" label="医生姓名"></el-table-column>
 			<el-table-column prop="date" label="科室"></el-table-column>
 			<el-table-column prop="name" label="总金额"></el-table-column>
 			<el-table-column prop="date" label="时间"></el-table-column>
-		</el-table>
-		<div class="payBtn">
-			<el-button type="primary" @click="postMsg">支付宝支付</el-button>
-			<el-button type="success" @click="postMsg">微信支付</el-button>
-		</div>
+		</el-table> -->
+		<el-dialog title="请扫描对应二维码进行支付" :visible.sync="dialogVisible" width="630px">
+			<div class="payDialog">
+				<div class="payType">
+					<img src="../assets/alipay.png" alt="" />
+				</div>
+				<div class="payType">
+					<img src="../assets/wechat.png" alt="" />
+				</div>
+			</div>
+		</el-dialog>
 	</div>
 </template>
-
 <script>
-// @ is an alias to /src
-const ip = require("ip");
 export default {
-	name: "Home",
-	components: {},
+	name: "payBox",
 	data() {
 		return {
-			ws: null,
 			tableData: [],
-			queryForm: {},
+			dialogVisible: true,
 		};
 	},
 	created() {
 		this.openWebSocket();
-		console.log(ip, "ip");
-		console.log(ip.address(), "ip");
-		console.log(ip.mask, "ip");
-	},
-	mounted() {
-		this.getUserIP((ip) => {
-			console.log(ip, "ippppppppppppppppppppp");
-		});
 	},
 	methods: {
-		getUserIP(onNewIP) {
-			let MyPeerConnection =
-				window.RTCPeerConnection ||
-				window.mozRTCPeerConnection ||
-				window.webkitRTCPeerConnection;
-			let pc = new MyPeerConnection({
-				iceServers: [],
-			});
-			let noop = () => {};
-			let localIPs = {};
-			let ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
-			let iterateIP = (ip) => {
-				if (!localIPs[ip]) onNewIP(ip);
-				localIPs[ip] = true;
-			};
-			pc.createDataChannel("");
-			pc.createOffer()
-				.then((sdp) => {
-					sdp.sdp.split("\n").forEach(function(line) {
-						if (line.indexOf("candidate") < 0) return;
-						line.match(ipRegex).forEach(iterateIP);
-					});
-					pc.setLocalDescription(sdp, noop, noop);
-				})
-				.catch((reason) => {});
-			pc.onicecandidate = (ice) => {
-				if (
-					!ice ||
-					!ice.candidate ||
-					!ice.candidate.candidate ||
-					!ice.candidate.candidate.match(ipRegex)
-				)
-					return;
-				ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
-			};
-		},
-		postMsg() {
-			this.ws.send('{"type":"say","msg":"123"}');
-		},
-		search() {},
 		openWebSocket() {
 			this.ws = new WebSocket("ws://192.168.31.226:7272");
 			let ws = this.ws;
@@ -142,11 +85,26 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.home {
+.payBox {
 	padding: 20px;
 	height: 100vh;
 	background: rgb(255, 247, 224);
+	.payDialog {
+		width: 600px;
+		margin: 30px auto 0;
+		display: flex;
+		justify-content: space-around;
+		.payType {
+			border: 1px solid #cccccc;
+			text-align: center;
+			width: 300px;
+		}
+		img {
+			width: 200px;
+		}
+	}
 	.title {
+		// background: lightgreen;
 		display: flex;
 		align-items: center;
 		text-align: left;

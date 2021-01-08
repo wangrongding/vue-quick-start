@@ -10,6 +10,7 @@ router.beforeEach(async (to, from, next) => {
 	}
 	if (!store.state.jobNumber) {
 		next("/login");
+		// next();
 		return;
 	} else {
 		next();

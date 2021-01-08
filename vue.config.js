@@ -2,8 +2,11 @@ const path = require("path");
 const resolve = (dir) => path.join(__dirname, dir);
 const NyanProgressPlugin = require("nyan-progress-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
+
+const publicPath = process.env.NODE_ENV == "production" ? "./" : "/";
 module.exports = {
 	devServer: {
+		publicPath: publicPath,
 		host: "0.0.0.0",
 		port: 9531,
 		disableHostCheck: true,
