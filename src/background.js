@@ -4,7 +4,11 @@ import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
-
+import getMAC, { isMAC } from "getmac";
+//获取mac地址
+import Vue from "vue";
+console.log(getMAC());
+Vue.prototype.$getMAC = getMAC();
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
 	{ scheme: "app", privileges: { secure: true, standard: true } },
@@ -13,15 +17,21 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
 	// Create the browser window.
 	const win = new BrowserWindow({
+		show: false,
 		width: 1920,
 		height: 1080,
+		// frame: false, //无边框
+		// transparent: true, //透明视窗
+		icon: "./assets/favicon.ico", //图标
 		webPreferences: {
 			// Use pluginOptions.nodeIntegration, leave this alone
 			// See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
 		},
 	});
-
+	win.maximize();
+	win.show();
+	// win.setMenu(null); //无菜单栏
 	if (process.env.WEBPACK_DEV_SERVER_URL) {
 		// Load the url of the dev server if in development mode
 		await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);

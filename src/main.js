@@ -8,6 +8,7 @@ import "element-ui/lib/theme-chalk/index.css";
 
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
+Vue.prototype.$getMAC2 = "123123";
 
 new Vue({
 	router,

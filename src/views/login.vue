@@ -1,50 +1,76 @@
 <template>
 	<div class="login">
-		<div class="login_center">
-			<img src="../assets/logo.png" alt />
-			<h3>瑞昌市人民医院缴费助手</h3>
-			<el-form
-				ref="loginForm"
-				:model="loginForm"
-				:rules="rules"
-				class="login-form"
-				autocomplete="on"
-				label-position="left"
-			>
-				<el-form-item prop="account">
-					<el-input
-						ref="account"
-						v-model="loginForm.account"
-						placeholder="请输入工号"
-						name="account"
-						type="text"
-						autocomplete="on"
-					/>
-				</el-form-item>
-				<el-form-item prop="password">
-					<el-input
-						ref="password"
-						v-model="loginForm.password"
-						type="password"
-						placeholder="请输入密码"
-						name="password"
-						autocomplete="on"
-						show-password
-						@keyup.enter.native="getSignIn"
-					/>
-				</el-form-item>
-				<el-form-item>
-					<el-button
-						class="login_btn"
-						:loading="loading"
-						type="primary"
-						style="width:100%;height:40px;"
-						@click.native.prevent="getSignIn"
-					>
-						登录
-					</el-button>
-				</el-form-item>
-			</el-form>
+		<div class="loginBox">
+			<div class="loginImg">
+				<img src="../assets/loginBoxBg.png" alt="" />
+			</div>
+			<div class="login_center">
+				<p class="title">用户登录</p>
+				<el-form
+					ref="loginForm"
+					:model="loginForm"
+					:rules="rules"
+					class="login-form"
+					autocomplete="on"
+					label-position="left"
+				>
+					<el-form-item prop="account">
+						<el-input
+							ref="account"
+							:trigger-on-focus="true"
+							v-model="loginForm.account"
+							placeholder="请输入工号"
+							clearable
+							name="account"
+							type="text"
+							autocomplete="on"
+							prefix-icon="el-icon-user"
+						/>
+					</el-form-item>
+					<el-form-item prop="password">
+						<el-input
+							clearable
+							ref="password"
+							prefix-icon="el-icon-lock"
+							v-model="loginForm.password"
+							type="password"
+							placeholder="请输入密码"
+							name="password"
+							autocomplete="on"
+							show-password
+							@keyup.enter.native="getSignIn"
+						/>
+					</el-form-item>
+					<el-form-item prop="type">
+						<el-select
+							prefix-icon="el-icon-connection"
+							style="width:100%"
+							v-model="loginForm.type"
+							clearable
+							placeholder="请选择收费类型"
+						>
+							<i
+								slot="prefix"
+								style="padding-left:6px;"
+								class="el-icon-connection"
+							></i>
+							<el-option label="门诊" value="1"></el-option>
+							<el-option label="住院" value="2"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item>
+						<el-button
+							:loading="loading"
+							type="primary"
+							style="width:100%;height:40px;"
+							@click.native.prevent="getSignIn"
+						>
+							登录
+						</el-button>
+					</el-form-item>
+				</el-form>
+				<img src="../assets/logo.png" alt />
+			</div>
 		</div>
 	</div>
 </template>
@@ -55,7 +81,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			loginForm: { account: "", password: "" },
+			loginForm: { account: "", password: "", type: "" },
 			checked: false,
 			rules: {
 				account: [
@@ -67,7 +93,7 @@ export default {
 					{
 						min: 5,
 						max: 13,
-						message: "长度在 10 到 13 个字符",
+						message: "长度在 5 到 13 个字符",
 						trigger: "blur",
 					},
 				],
@@ -78,12 +104,24 @@ export default {
 						trigger: "blur",
 					},
 				],
+				type: [
+					{
+						required: true,
+						message: "请选择收费类型",
+						trigger: "blur",
+					},
+				],
 			},
 		};
 	},
 	computed: {},
 	created() {},
-	mounted() {},
+	mounted() {
+		console.log(this);
+		console.log(this.$Vue);
+		console.log(this.$getMAC2);
+		console.log(this.$getMAC);
+	},
 	watch: {},
 	methods: {
 		getSignIn() {
@@ -125,24 +163,42 @@ export default {
 .login {
 	width: 100%;
 	height: 100vh;
-	background: url(../assets/bg.jpg);
+	background: url(../assets/bg.png);
 	background-repeat: no-repeat;
-	background-size: 1920px 1000px;
+	background-size: cover;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	.loginBox {
+		width: 1000px;
+		overflow: hidden;
+		height: 529px;
+		background: rgb(255, 255, 255);
+		margin: 0 auto;
+		display: flex;
+		justify-content: flex-start;
+		box-shadow: #acacac 0px 1px 25px;
+	}
+	.loginImg {
+		// width: 870px;
+		// background: url("../assets/loginBoxBg.png");
+		img {
+			width: 600px;
+		}
+	}
 	.login_center {
 		text-align: center;
-		width: 300px;
-		background: rgba(0, 0, 0, 0.397);
-		color: white;
+		width: 725px;
+		// background: rgba(0, 0, 0, 0.397);
+		color: #409eff;
 		border-radius: 5px;
-		padding: 25px 40px;
-		position: absolute;
-		right: 150px;
-		top: 200px;
+		padding: 40px 60px 25px;
+		.title {
+			font-size: 28px;
+			font-weight: 400;
+		}
 		img {
-			width: 50px;
+			width: 150px;
 		}
 		/* 	/deep/ .el-input__inner {
 			width: 100%;

@@ -31,6 +31,7 @@
 <script>
 // @ is an alias to /src
 const ip = require("ip");
+
 export default {
 	name: "Home",
 	components: {},
@@ -43,52 +44,12 @@ export default {
 	},
 	created() {
 		this.openWebSocket();
-		console.log(ip, "ip");
-		console.log(ip.address(), "ip");
-		console.log(ip.mask, "ip");
+		// console.log(ip, "ip");
+		// console.log(ip.address(), "ip");
+		// console.log(ip.mask, "ip");
 	},
-	mounted() {
-		this.getUserIP((ip) => {
-			console.log(ip, "ippppppppppppppppppppp");
-		});
-	},
+	mounted() {},
 	methods: {
-		getUserIP(onNewIP) {
-			let MyPeerConnection =
-				window.RTCPeerConnection ||
-				window.mozRTCPeerConnection ||
-				window.webkitRTCPeerConnection;
-			let pc = new MyPeerConnection({
-				iceServers: [],
-			});
-			let noop = () => {};
-			let localIPs = {};
-			let ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
-			let iterateIP = (ip) => {
-				if (!localIPs[ip]) onNewIP(ip);
-				localIPs[ip] = true;
-			};
-			pc.createDataChannel("");
-			pc.createOffer()
-				.then((sdp) => {
-					sdp.sdp.split("\n").forEach(function(line) {
-						if (line.indexOf("candidate") < 0) return;
-						line.match(ipRegex).forEach(iterateIP);
-					});
-					pc.setLocalDescription(sdp, noop, noop);
-				})
-				.catch((reason) => {});
-			pc.onicecandidate = (ice) => {
-				if (
-					!ice ||
-					!ice.candidate ||
-					!ice.candidate.candidate ||
-					!ice.candidate.candidate.match(ipRegex)
-				)
-					return;
-				ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
-			};
-		},
 		postMsg() {
 			this.ws.send('{"type":"say","msg":"123"}');
 		},
