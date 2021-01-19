@@ -4,6 +4,9 @@ const NyanProgressPlugin = require("nyan-progress-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 
 const publicPath = process.env.NODE_ENV == "production" ? "./" : "/";
+const interfaces = require("os").networkInterfaces();
+process.env.VUE_APP_MAC = interfaces["以太网"][0].mac;
+console.log(interfaces["以太网"][0].mac);
 module.exports = {
 	devServer: {
 		publicPath: publicPath,
@@ -25,7 +28,7 @@ module.exports = {
 	configureWebpack: () => {
 		let temparr = [];
 		if (process.env.NODE_ENV !== "production") {
-			temparr.push(
+			/* temparr.push(
 				new NyanProgressPlugin({
 					// 获取进度的时间间隔，默认 180 ms
 					debounceInterval: 60,
@@ -36,7 +39,7 @@ module.exports = {
 						}
 					},
 				})
-			);
+			); */
 		} else {
 			temparr.push(
 				new CompressionPlugin({

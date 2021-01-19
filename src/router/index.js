@@ -1,14 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+/* Layout */
+import Layout from "@/views/container.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
 	{
 		path: "/",
-		name: "Home",
-		component: Home,
+		redirect: "/OPSList",
 	},
 	{
 		path: "/login",
@@ -16,13 +17,31 @@ const routes = [
 		component: () => import("../views/login.vue"),
 	},
 	{
-		path: "/payBox",
-		name: "payBox",
-		// route level code-splitting
-		// this generates a separate chunk (payBox.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "payBox" */ "../views/payBox.vue"),
+		path: "/",
+		component: Layout,
+		// redirect: "/OPSList",
+		children: [
+			{ path: "OPSList", name: "OPSList", component: () => import("@/views/OPSList.vue") },
+		],
 	},
+	{
+		path: "/inHospital",
+		component: Layout,
+		name: "inHospital",
+		children: [{ path: "", name: "", component: () => import("@/views/inHospital.vue") }],
+	},
+	{
+		path: "/payBox",
+		component: Layout,
+		name: "payBox",
+		children: [{ path: "", name: "", component: () => import("@/views/payBox.vue") }],
+	},
+	{
+		path: "/404",
+		hidden: true,
+		component: () => import("@/views/404.vue"),
+	},
+	{ path: "*", redirect: "/404/", hidden: true }, //404頁面
 ];
 
 const router = new VueRouter({

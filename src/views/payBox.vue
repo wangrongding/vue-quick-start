@@ -1,120 +1,89 @@
 <template>
 	<div class="payBox">
 		<div class="title">
-			<img src="../assets/logo.jpg" alt="" width="50px" />
-			<h2>瑞昌市人民医院缴费助手</h2>
+			<h2>支付二维码</h2>
 		</div>
-		<!-- <el-table :data="tableData" style="width: 100%">
-			<el-table-column prop="date" label="序号"></el-table-column>
-			<el-table-column prop="date" label="医生姓名"></el-table-column>
-			<el-table-column prop="date" label="科室"></el-table-column>
-			<el-table-column prop="name" label="总金额"></el-table-column>
-			<el-table-column prop="date" label="时间"></el-table-column>
-		</el-table> -->
-		<el-dialog title="请扫描对应二维码进行支付" :visible.sync="dialogVisible" width="630px">
-			<div class="payDialog">
-				<div class="payType">
-					<img src="../assets/alipay.png" alt="" />
-				</div>
-				<div class="payType">
-					<img src="../assets/wechat.png" alt="" />
-				</div>
+		<div class="payDialog">
+			<div class="payType">
+				<img src="../assets/alipay.png" alt="" />
+				<canvas class="qrcode" ref="qrcode1"></canvas>
+				<p class="money">899¥</p>
+				<p>请用手机扫描相应二维码后进行支付</p>
 			</div>
-		</el-dialog>
+			<div class="payType">
+				<img src="../assets/wechat.png" alt="" />
+				<canvas class="qrcode" ref="qrcode2"></canvas>
+				<p class="money">899¥</p>
+				<p>请用手机扫描相应二维码后进行支付</p>
+			</div>
+		</div>
 	</div>
 </template>
 <script>
+import QRCode from "qrcode";
 export default {
 	name: "payBox",
 	data() {
 		return {
 			tableData: [],
-			dialogVisible: true,
+			dialogVisible: false,
 		};
 	},
-	created() {
-		this.openWebSocket();
+	created() {},
+	mounted() {
+		QRCode.toCanvas(this.$refs.qrcode1, "asdfagfsdafsadfasdf12sdfadsafad", {
+			width: 300,
+			height: 300,
+		});
+		QRCode.toCanvas(this.$refs.qrcode2, "asdfagfsdafsadfasdf12sdfadsafad", {
+			width: 300,
+			height: 300,
+		});
 	},
-	methods: {
-		openWebSocket() {
-			this.ws = new WebSocket("ws://192.168.31.226:7272");
-			let ws = this.ws;
-			// 当socket连接打开时，输入用户名
-			ws.onopen = () => {
-				// 登录
-				var login_data = JSON.stringify({
-					type: "login",
-					hid: 2,
-					room_id: 111,
-				});
-				ws.send(login_data);
-			};
-			// 当有消息时根据消息类型显示不同信息
-			ws.onmessage = (res) => {
-				var data = JSON.parse(res.data);
-				switch (data["type"]) {
-					// 服务端ping客户端
-					case "ping": {
-						ws.send('{"type":"pong"}');
-						console.log("ping");
-						break;
-					}
-					case "login": {
-						// 登录 更新用户列表
-						//保存client_id
-						this.client_id = data["client_id"];
-						console.log(this.client_id, " this.client_id");
-						break;
-					}
-					case "say": {
-						let { message_type } = data;
-						let tempDate = data;
-						tempDate.type = data.message_type;
-						break;
-					}
-				}
-			};
-			ws.onclose = function() {
-				console.log("连接关闭!");
-			};
-			ws.onerror = function() {
-				console.log("出现错误");
-			};
-		},
-	},
+	methods: {},
 };
 </script>
 <style lang="scss" scoped>
 .payBox {
-	padding: 20px;
-	height: 100vh;
-	background: rgb(255, 247, 224);
+	padding: 0 20px;
+	// height: 100vh;
+	height: 100%;
+	background: rgb(255, 255, 255);
 	.payDialog {
-		width: 600px;
-		margin: 30px auto 0;
+		width: 90%;
 		display: flex;
 		justify-content: space-around;
+		margin: 30px auto 0;
 		.payType {
-			border: 1px solid #cccccc;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			// border: 1px solid #cccccc86;
 			text-align: center;
-			width: 300px;
-		}
-		img {
-			width: 200px;
+			// width: 300px;
+			img {
+				width: 150px;
+			}
+			.money {
+				font-size: 22px;
+				font-weight: 400;
+				margin: 0;
+			}
 		}
 	}
 	.title {
-		// background: lightgreen;
 		display: flex;
 		align-items: center;
 		text-align: left;
-		height: 60px;
-		line-height: 60px;
-		border-bottom: 1px solid #ccc;
+		height: 80px;
+		line-height: 80px;
+		border-bottom: 1px solid #eaeaeab9;
 		margin-bottom: 20px;
 		h2 {
+			font-size: 26px;
 			margin: 0;
-			line-height: 60px;
+			border-bottom: 3px solid#5aa0f6;
+			line-height: 80px;
 			display: inline-block;
 		}
 	}
@@ -122,8 +91,18 @@ export default {
 		text-align: center;
 	}
 	.payBtn {
-		text-align: right;
+		text-align: center;
 		margin-top: 40px;
+	}
+	.queryForm {
+		text-align: center;
+		::v-deep .el-input__inner {
+			border-radius: 50px;
+			overflow: hidden;
+		}
+	}
+	::v-deep .tbHead {
+		background: #ecf3ff;
 	}
 }
 </style>

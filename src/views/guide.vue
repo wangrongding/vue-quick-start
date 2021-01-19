@@ -5,17 +5,6 @@
 				<img src="../assets/loginBoxBg.png" alt="" />
 			</div>
 			<div class="login_center">
-				<div class="changeRole" @click="changeRole">
-					<el-tooltip
-						class="item"
-						effect="dark"
-						:content="'切换为' + Role + '端登录'"
-						placement="top"
-					>
-						<!-- <el-button>上边</el-button> -->
-						<i class="el-icon-sort"></i>
-					</el-tooltip>
-				</div>
 				<p class="title">用户登录</p>
 				<el-form
 					ref="loginForm"
@@ -25,39 +14,36 @@
 					autocomplete="on"
 					label-position="left"
 				>
-					<transition name="fade">
-						<el-form-item prop="number" v-show="this.Role == '收银员'">
-							<el-input
-								ref="number"
-								:trigger-on-focus="true"
-								v-model="loginForm.number"
-								placeholder="请输入工号"
-								clearable
-								name="number"
-								type="text"
-								autocomplete="on"
-								prefix-icon="el-icon-user"
-							/>
-						</el-form-item>
-					</transition>
-					<transition name="fade">
-						<el-form-item prop="password" v-show="this.Role == '收银员'">
-							<el-input
-								clearable
-								ref="password"
-								prefix-icon="el-icon-lock"
-								v-model="loginForm.password"
-								type="password"
-								placeholder="请输入密码"
-								name="password"
-								autocomplete="on"
-								show-password
-								@keyup.enter.native="getSignIn"
-							/>
-						</el-form-item>
-					</transition>
+					<el-form-item prop="account">
+						<el-input
+							ref="account"
+							:trigger-on-focus="true"
+							v-model="loginForm.account"
+							placeholder="请输入工号"
+							clearable
+							name="account"
+							type="text"
+							autocomplete="on"
+							prefix-icon="el-icon-user"
+						/>
+					</el-form-item>
+					<el-form-item prop="password">
+						<el-input
+							clearable
+							ref="password"
+							prefix-icon="el-icon-lock"
+							v-model="loginForm.password"
+							type="password"
+							placeholder="请输入密码"
+							name="password"
+							autocomplete="on"
+							show-password
+							@keyup.enter.native="getSignIn"
+						/>
+					</el-form-item>
 					<el-form-item prop="type">
 						<el-select
+							prefix-icon="el-icon-connection"
 							style="width:100%"
 							v-model="loginForm.type"
 							clearable
@@ -72,22 +58,6 @@
 							<el-option label="住院" value="2"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item prop="machineCode">
-						<el-select
-							style="width:100%"
-							v-model="loginForm.machineCode"
-							clearable
-							placeholder="请选择房间号"
-						>
-							<i slot="prefix" style="padding-left:6px;" class="el-icon-house"></i>
-							<el-option
-								v-for="item in roomIdList"
-								:key="item.code"
-								:label="item.name"
-								:value="item.code"
-							></el-option>
-						</el-select>
-					</el-form-item>
 					<el-form-item>
 						<el-button
 							:loading="loading"
@@ -99,37 +69,33 @@
 						</el-button>
 					</el-form-item>
 				</el-form>
-				<img src="../assets/logo1.png" alt />
+				<img src="../assets/logo.png" alt />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { login, getMachineList } from "api/index.js";
-import md5 from "md5";
 export default {
 	props: {},
 	data() {
 		return {
-			Role: "收银员",
 			loading: false,
-			roomIdList: ["qwe1", "qwe2", "qwe3"],
-			loginForm: { number: "", password: "", type: "", machineCode: "" },
+			loginForm: { account: "", password: "", type: "" },
 			checked: false,
 			rules: {
-				number: [
+				account: [
 					{
 						required: true,
-						message: "请输入工号",
+						message: "请输入账号",
 						trigger: "blur",
 					},
-					/* {
+					{
 						min: 5,
 						max: 13,
 						message: "长度在 5 到 13 个字符",
 						trigger: "blur",
-					}, */
+					},
 				],
 				password: [
 					{
@@ -149,73 +115,33 @@ export default {
 		};
 	},
 	computed: {},
-	created() {
-		// this.handlePage();
-		this.getMachineList();
-	},
+	created() {},
 	mounted() {
-		// console.log(this);
-		// console.log(process.env.VUE_APP_MAC, "process.env.VUE_APP_MAC_ADDRESS");
+		console.log(this);
+		console.log(process.env.VUE_APP_MAC, "process.env.VUE_APP_MAC_ADDRESS");
 	},
 	watch: {},
 	methods: {
-		changeRole() {
-			console.log(this.Role);
-			if (this.Role == "收银员") {
-				this.Role = "患者";
-			} else {
-				this.Role = "收银员";
-			}
-		},
-		getMachineList() {
-			getMachineList().then((res) => {
-				console.log(res);
-				this.roomIdList = res.list;
-			});
-		},
-		getRoomId() {
-			let machineCode = window.localStorage.getItem("machineCode");
-			console.log(!!machineCode);
-			return machineCode ? true : false;
-		},
-		handlePage() {
-			if (this.getRoomId()) {
-				this.$router.push({
-					path: "/inHospital",
-				});
-			} else {
-				return;
-				/* this.$router.push({
-					path: "/login",
-				}); */
-			}
-		},
 		getSignIn() {
 			this.loading = true;
 			this.$refs["loginForm"].validate((valid) => {
 				if (valid) {
-					console.log(this.loginForm.type == "1");
-					/* if (this.loginForm.type == "1") {
-						this.$router.push({
-							path: "/",
-						});
-					} else {
-						this.$router.push({
-							path: "/inHospital",
-						});
-					} */
+					this.$store.commit("saveJobNumber", this.loginForm);
+					console.log(this.$store.state.jobNumber);
+					this.$router.push({
+						path: "/",
+					});
 					this.loading = false;
-					this.$store.commit("saveUserInfo", this.loginForm);
-					login(this.loginForm)
+					/* getSignIn(this.loginForm)
 						.then((res) => {
-							console.log(res);
-							this.$store.commit("saveToken", res.token);
+							this.$store.commit("loginSidebarList", res.menu);
+							this.$store.commit("saveBaseInfo", res);
 							this.loading = false;
 						})
 						.catch((err) => {
 							console.log(err, "登录失败");
 							this.loading = false;
-						});
+						}); */
 				} else {
 					this.loading = false;
 					this.$message({
@@ -289,14 +215,6 @@ export default {
 			float: left;
 			border: none;
 			// margin-top: 30px;
-		}
-		.changeRole {
-			float: right;
-			width: 24px;
-			height: 24px;
-			font-size: 20px;
-			margin: 0 auto;
-			cursor: pointer;
 		}
 	}
 }
